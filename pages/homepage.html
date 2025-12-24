@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Beranda - Sistem Deteksi Penyakit Tanaman">
+  <title>Beranda - Plant Disease Detection</title>
+  
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="../css/styles.css">
+  
+  <style>
+    /* Homepage Specific Styles */
+    .homepage-container {
+      background-color: var(--background-color);
+    }
+    
+    .homepage-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, #1B5E20 100%);
+      padding: var(--spacing-md) var(--spacing-md) var(--spacing-md);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .homepage-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 20% 80%, rgba(165, 214, 167, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(165, 214, 167, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    
+    .header-content {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .header-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--secondary-color), #81C784);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto var(--spacing-sm);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .header-icon i {
+      font-size: 32px;
+      color: var(--primary-color);
+    }
+    
+    .homepage-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+    
+    .homepage-subtitle {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.5;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    
+    .homepage-content {
+      padding: var(--spacing-sm);
+    }
+    
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: var(--spacing-sm);
+      padding-left: var(--spacing-xs);
+    }
+    
+    .feature-cards {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .feature-card {
+      background: var(--white);
+      border-radius: 10px;
+      padding: var(--spacing-sm);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: flex-start;
+      gap: var(--spacing-sm);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .feature-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+      border-color: var(--secondary-color);
+    }
+    
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      background: linear-gradient(135deg, var(--secondary-color), #81C784);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .feature-icon i {
+      font-size: 24px;
+      color: var(--primary-color);
+    }
+    
+    .feature-content {
+      flex: 1;
+    }
+    
+    .feature-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+    
+    .feature-description {
+      font-size: 12px;
+      color: var(--text-light);
+      line-height: 1.4;
+      margin: 0;
+    }
+    
+    .cta-section {
+      background: var(--white);
+      border-radius: 10px;
+      padding: var(--spacing-md);
+      box-shadow: var(--shadow-sm);
+      text-align: center;
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .cta-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+    
+    .cta-description {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: var(--spacing-sm);
+      line-height: 1.4;
+    }
+    
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-xs);
+      margin-top: var(--spacing-sm);
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .stat-item {
+      background: linear-gradient(135deg, var(--primary-color), #1B5E20);
+      border-radius: 10px;
+      padding: var(--spacing-sm) 8px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .stat-number {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      display: block;
+      margin-bottom: 2px;
+    }
+    
+    .stat-label {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.9);
+      display: block;
+    }
+    
+    .info-banner {
+      background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+      border-radius: 10px;
+      padding: var(--spacing-sm);
+      margin-bottom: var(--spacing-sm);
+      border-left: 3px solid var(--warning-color);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    
+    .info-banner i {
+      font-size: 18px;
+      color: var(--warning-color);
+      margin-top: 1px;
+    }
+    
+    .info-content {
+      flex: 1;
+    }
+    
+    .info-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #E65100;
+      margin-bottom: 3px;
+    }
+    
+    .info-text {
+      font-size: 11px;
+      color: #5D4037;
+      margin: 0;
+      line-height: 1.4;
+    }
+    
+    /* Animations */
+    .fade-in-up {
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .fade-in-up:nth-child(1) { animation-delay: 0.1s; }
+    .fade-in-up:nth-child(2) { animation-delay: 0.2s; }
+    .fade-in-up:nth-child(3) { animation-delay: 0.3s; }
+    .fade-in-up:nth-child(4) { animation-delay: 0.4s; }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="homepage-container">
+      <!-- Header Section -->
+      <div class="homepage-header">
+        <div class="header-content">
+          <div class="header-icon">
+            <i class="fas fa-leaf"></i>
+          </div>
+          <h1 class="homepage-title">Selamat Datang!</h1>
+          <p class="homepage-subtitle">
+            Deteksi penyakit tanaman dengan mudah dan dapatkan solusi pengobatan yang tepat
+          </p>
+        </div>
+      </div>
+      
+      <!-- Main Content -->
+      <div class="homepage-content">
+        <!-- Stats Section -->
+        <div class="stats-container">
+          <div class="stat-item">
+            <span class="stat-number">7+</span>
+            <span class="stat-label">Penyakit</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">90%</span>
+            <span class="stat-label">Akurasi</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">3s</span>
+            <span class="stat-label">Analisis</span>
+          </div>
+        </div>
+        
+        <!-- Info Banner -->
+        <div class="info-banner">
+          <i class="fas fa-info-circle"></i>
+          <div class="info-content">
+            <div class="info-title">Catatan Penting</div>
+            <p class="info-text">
+              Ini adalah prototype akademis. Hasil deteksi bersifat simulasi dan tidak menggantikan diagnosis ahli pertanian.
+            </p>
+          </div>
+        </div>
+        
+        <!-- Features Section -->
+        <h2 class="section-title">
+          <i class="fas fa-sparkles" style="color: var(--primary-color); margin-right: 8px;"></i>
+          Fitur Unggulan
+        </h2>
+        
+        <div class="feature-cards">
+          <div class="feature-card fade-in-up">
+            <div class="feature-icon">
+              <i class="fas fa-camera"></i>
+            </div>
+            <div class="feature-content">
+              <h3 class="feature-title">Upload Gambar Daun</h3>
+              <p class="feature-description">
+                Ambil foto daun tanaman yang terindikasi sakit untuk dianalisis oleh sistem AI
+              </p>
+            </div>
+          </div>
+          
+          <div class="feature-card fade-in-up">
+            <div class="feature-icon">
+              <i class="fas fa-brain"></i>
+            </div>
+            <div class="feature-content">
+              <h3 class="feature-title">Analisis AI</h3>
+              <p class="feature-description">
+                Sistem akan menganalisis gambar dan mendeteksi jenis penyakit dengan tingkat kepercayaan tinggi
+              </p>
+            </div>
+          </div>
+          
+          <div class="feature-card fade-in-up">
+            <div class="feature-icon">
+              <i class="fas fa-file-medical"></i>
+            </div>
+            <div class="feature-content">
+              <h3 class="feature-title">Hasil Diagnosis</h3>
+              <p class="feature-description">
+                Dapatkan hasil diagnosis lengkap dengan nama penyakit dan tingkat keyakinan deteksi
+              </p>
+            </div>
+          </div>
+          
+          <div class="feature-card fade-in-up">
+            <div class="feature-icon">
+              <i class="fas fa-pills"></i>
+            </div>
+            <div class="feature-content">
+              <h3 class="feature-title">Rekomendasi Pengobatan</h3>
+              <p class="feature-description">
+                Terima panduan lengkap cara pengobatan dan pencegahan penyakit tanaman
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- CTA Section -->
+        <div class="cta-section">
+          <h2 class="cta-title">Siap Memulai?</h2>
+          <p class="cta-description">
+            Mulai deteksi penyakit tanaman sekarang dengan mengambil atau upload foto daun
+          </p>
+          <button class="btn" onclick="navigateTo('detection.html')">
+            <i class="fas fa-search"></i>
+            <span>Mulai Deteksi Penyakit</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- JavaScript -->
+  <script src="../js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Rekomendasi Pengobatan - Deteksi Penyakit Tanaman">
+  <title>Rekomendasi - Plant Disease Detection</title>
+  
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="../css/styles.css">
+  
+  <style>
+    /* Recommendation Page Specific Styles */
+    .recommendation-container {
+      background-color: var(--background-color);
+      min-height: 100vh;
+      padding-bottom: 80px;
+    }
+    
+    .recommendation-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, #1B5E20 100%);
+      padding: var(--spacing-md);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .recommendation-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 20% 80%, rgba(165, 214, 167, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(165, 214, 167, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    
+    .header-content {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .back-button {
+      position: absolute;
+      left: var(--spacing-md);
+      top: var(--spacing-md);
+      background: rgba(255, 255, 255, 0.2);
+      color: var(--white);
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+    
+    .back-button:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+    }
+    
+    .back-button i {
+      font-size: 18px;
+    }
+    
+    .recommendation-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--secondary-color), #81C784);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto var(--spacing-sm);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .recommendation-icon i {
+      font-size: 32px;
+      color: var(--primary-color);
+    }
+    
+    .recommendation-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+    
+    .recommendation-subtitle {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.5;
+    }
+    
+    .recommendation-content {
+      padding: var(--spacing-sm);
+    }
+    
+    .disease-summary {
+      background: var(--white);
+      border-radius: 10px;
+      padding: var(--spacing-md);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: var(--spacing-sm);
+      border-left: 4px solid var(--primary-color);
+    }
+    
+    .disease-summary-title {
+      font-size: 12px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    
+    .disease-summary-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 4px;
+    }
+    
+    .disease-summary-latin {
+      font-size: 12px;
+      color: var(--text-light);
+      font-style: italic;
+    }
+    
+    .section {
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: var(--spacing-sm);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .section-title i {
+      color: var(--primary-color);
+      font-size: 18px;
+    }
+    
+    .recommendations-card {
+      background: var(--white);
+      border-radius: 10px;
+      padding: var(--spacing-md);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+    }
+    
+    .recommendation-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .recommendation-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm);
+      border-radius: 8px;
+      margin-bottom: var(--spacing-sm);
+      background: var(--background-color);
+      border-left: 3px solid var(--primary-color);
+    }
+    
+    .recommendation-item:last-child {
+      margin-bottom: 0;
+    }
+    
+    .recommendation-number {
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      background: linear-gradient(135deg, var(--primary-color), #1B5E20);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--white);
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .recommendation-text {
+      flex: 1;
+      font-size: 13px;
+      color: var(--text-dark);
+      line-height: 1.6;
+      padding-top: 3px;
+    }
+    
+    .prevention-card {
+      background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+      border-radius: 10px;
+      padding: var(--spacing-md);
+      border: 1px solid var(--secondary-color);
+    }
+    
+    .prevention-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-bottom: var(--spacing-sm);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .prevention-title i {
+      font-size: 16px;
+    }
+    
+    .prevention-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .prevention-list li {
+      font-size: 12px;
+      color: var(--text-dark);
+      line-height: 1.6;
+      padding-left: 24px;
+      position: relative;
+      margin-bottom: 8px;
+    }
+    
+    .prevention-list li:last-child {
+      margin-bottom: 0;
+    }
+    
+    .prevention-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--success-color);
+      font-weight: 700;
+      font-size: 14px;
+    }
+    
+    .disclaimer-card {
+      background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+      border-radius: 10px;
+      padding: var(--spacing-md);
+      border-left: 4px solid var(--warning-color);
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .disclaimer-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .disclaimer-header i {
+      font-size: 18px;
+      color: var(--warning-color);
+    }
+    
+    .disclaimer-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #E65100;
+      margin: 0;
+    }
+    
+    .disclaimer-text {
+      font-size: 12px;
+      color: #5D4037;
+      line-height: 1.6;
+      margin: 0;
+    }
+    
+    .action-section {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: var(--max-width);
+      background: var(--white);
+      padding: var(--spacing-sm);
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+      border-top: 1px solid var(--border-color);
+      z-index: 100;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: var(--spacing-xs);
+    }
+    
+    /* Animations */
+    .fade-in {
+      animation: fadeIn 0.6s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .slide-in {
+      animation: slideIn 0.6s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="recommendation-container">
+      <!-- Header Section -->
+      <div class="recommendation-header">
+        <button class="back-button" onclick="navigateTo('result.html')" title="Kembali">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        
+        <div class="header-content">
+          <div class="recommendation-icon">
+            <i class="fas fa-pills"></i>
+          </div>
+          <h1 class="recommendation-title">Rekomendasi Pengobatan</h1>
+          <p class="recommendation-subtitle">
+            Panduan lengkap untuk mengatasi penyakit tanaman
+          </p>
+        </div>
+      </div>
+      
+      <!-- Main Content -->
+      <div class="recommendation-content">
+        <!-- Disease Summary -->
+        <div class="disease-summary fade-in">
+          <p class="disease-summary-title">Penyakit Terdeteksi</p>
+          <h2 id="recDiseaseName" class="disease-summary-name">Loading...</h2>
+          <p id="recLatinName" class="disease-summary-latin">-</p>
+        </div>
+        
+        <!-- Recommendations Section -->
+        <div class="section">
+          <h3 class="section-title">
+            <i class="fas fa-stethoscope"></i>
+            Langkah Pengobatan
+          </h3>
+          
+          <div class="recommendations-card slide-in">
+            <ol id="recommendationsList" class="recommendation-list">
+              <!-- Recommendations will be loaded via JavaScript -->
+            </ol>
+          </div>
+        </div>
+        
+        <!-- Prevention Section -->
+        <div class="section">
+          <div class="prevention-card fade-in">
+            <h3 class="prevention-title">
+              <i class="fas fa-shield-alt"></i>
+              Tips Pencegahan
+            </h3>
+            <ul id="preventionList" class="prevention-list">
+              <!-- Prevention tips will be loaded via JavaScript -->
+            </ul>
+          </div>
+        </div>
+        
+        <!-- Disclaimer -->
+        <div class="disclaimer-card fade-in">
+          <div class="disclaimer-header">
+            <i class="fas fa-exclamation-circle"></i>
+            <h3 class="disclaimer-title">Penting untuk Diketahui</h3>
+          </div>
+          <p class="disclaimer-text">
+            Rekomendasi ini bersifat umum dan merupakan hasil simulasi AI untuk keperluan akademis. Untuk penanganan yang lebih akurat, konsultasikan dengan ahli pertanian atau agronomis profesional. Selalu lakukan uji coba pada area kecil sebelum aplikasi menyeluruh.
+          </p>
+        </div>
+      </div>
+      
+      <!-- Action Section -->
+      <div class="action-section">
+        <div class="action-buttons">
+          <button class="btn btn-secondary-action" onclick="navigateTo('upload.html')">
+            <i class="fas fa-redo"></i>
+            <span>Deteksi Lagi</span>
+          </button>
+          <button class="btn" onclick="goToHomepage()">
+            <i class="fas fa-home"></i>
+            <span>Kembali ke Beranda</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- JavaScript -->
+  <script src="../js/app.js"></script>
+  
+  <script>
+    // Load recommendation data when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const disease = getSelectedDisease();
+      
+      // Redirect if no data
+      if (!disease) {
+        alert('Data tidak ditemukan. Silakan ulangi proses deteksi.');
+        goToHomepage();
+        return;
+      }
+      
+      // Display disease name
+      const diseaseName = document.getElementById('recDiseaseName');
+      if (diseaseName && disease.name) {
+        diseaseName.textContent = disease.name;
+      }
+      
+      // Display latin name
+      const latinName = document.getElementById('recLatinName');
+      if (latinName && disease.latinName) {
+        latinName.textContent = disease.latinName;
+      }
+      
+      // Display recommendations
+      const recommendationsList = document.getElementById('recommendationsList');
+      if (recommendationsList && disease.recommendations) {
+        recommendationsList.innerHTML = '';
+        disease.recommendations.forEach((rec, index) => {
+          const li = document.createElement('li');
+          li.className = 'recommendation-item fade-in';
+          li.style.animationDelay = `${index * 0.1}s`;
+          li.innerHTML = `
+            <div class="recommendation-number">${index + 1}</div>
+            <div class="recommendation-text">${rec}</div>
+          `;
+          recommendationsList.appendChild(li);
+        });
+      }
+      
+      // Display prevention tips
+      const preventionList = document.getElementById('preventionList');
+      if (preventionList && disease.prevention) {
+        preventionList.innerHTML = '';
+        disease.prevention.forEach((tip) => {
+          const li = document.createElement('li');
+          li.textContent = tip;
+          preventionList.appendChild(li);
+        });
+      }
+    });
+  </script>
+</body>
+</html>

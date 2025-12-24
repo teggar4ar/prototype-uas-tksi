@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Hasil Analisis - Deteksi Penyakit Tanaman">
+  <title>Hasil Analisis - Plant Disease Detection</title>
+  
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="../css/styles.css">
+  
+  <style>
+    /* Result Page Specific Styles */
+    .result-container {
+      background-color: var(--background-color);
+      min-height: 100vh;
+    }
+    
+    .result-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, #1B5E20 100%);
+      padding: var(--spacing-md);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .result-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 20% 80%, rgba(165, 214, 167, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(165, 214, 167, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    
+    .header-content {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--secondary-color), #81C784);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto var(--spacing-sm);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      animation: scaleIn 0.5s ease-out;
+    }
+    
+    .success-icon i {
+      font-size: 32px;
+      color: var(--primary-color);
+    }
+    
+    .result-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+    
+    .result-subtitle {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.5;
+    }
+    
+    .result-content {
+      padding: var(--spacing-sm);
+      padding-bottom: 80px;
+    }
+    
+    .image-card {
+      background: var(--white);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-sm);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: var(--spacing-sm);
+      border: 1px solid var(--border-color);
+    }
+    
+    .image-preview {
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .image-preview img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    
+    .diagnosis-card {
+      background: var(--white);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-md);
+      box-shadow: var(--shadow-md);
+      margin-bottom: var(--spacing-sm);
+      border: 2px solid var(--secondary-color);
+    }
+    
+    .diagnosis-header {
+      text-align: center;
+      margin-bottom: var(--spacing-md);
+      padding-bottom: var(--spacing-sm);
+      border-bottom: 2px solid var(--background-color);
+    }
+    
+    .diagnosis-label {
+      font-size: 12px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    
+    .disease-name {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: var(--spacing-sm);
+      line-height: 1.3;
+    }
+    
+    .confidence-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .confidence-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #1B5E20, #2E7D32);
+      color: #FFFFFF;
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: var(--shadow-sm);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+    
+    .confidence-badge span {
+      color: #FFFFFF;
+    }
+    
+    .confidence-badge i {
+      font-size: 16px;
+    }
+    
+    .latin-name {
+      font-size: 13px;
+      color: var(--text-light);
+      font-style: italic;
+      text-align: center;
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .description-text {
+      font-size: 13px;
+      color: var(--text-dark);
+      line-height: 1.6;
+      text-align: justify;
+    }
+    
+    .severity-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .severity-sedang {
+      background: #FFF3E0;
+      color: #E65100;
+      border: 1px solid #FFB74D;
+    }
+    
+    .severity-tinggi {
+      background: #FFEBEE;
+      color: #C62828;
+      border: 1px solid #EF5350;
+    }
+    
+    .severity-sangat-tinggi {
+      background: #F3E5F5;
+      color: #6A1B9A;
+      border: 1px solid #AB47BC;
+    }
+    
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--spacing-xs);
+      margin-top: var(--spacing-sm);
+    }
+    
+    .info-item {
+      background: var(--background-color);
+      padding: var(--spacing-sm);
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .info-label {
+      font-size: 11px;
+      color: var(--text-light);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .info-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+    
+    .action-section {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: var(--max-width);
+      background: var(--white);
+      padding: var(--spacing-sm);
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+      border-top: 1px solid var(--border-color);
+      z-index: 100;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: var(--spacing-xs);
+    }
+    
+    .btn-secondary-action {
+      flex: 1;
+      background: var(--background-color);
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+    }
+    
+    .btn-secondary-action:hover {
+      background: var(--secondary-color);
+    }
+    
+    .btn-primary-action {
+      flex: 2;
+    }
+    
+    /* Animations */
+    @keyframes scaleIn {
+      from {
+        transform: scale(0);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.6s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .slide-up {
+      animation: slideUp 0.6s ease-out;
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="result-container">
+      <!-- Header Section -->
+      <div class="result-header">
+        <div class="header-content">
+          <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <h1 class="result-title">Analisis Selesai!</h1>
+          <p class="result-subtitle">
+            Berikut hasil deteksi penyakit tanaman Anda
+          </p>
+        </div>
+      </div>
+      
+      <!-- Main Content -->
+      <div class="result-content">
+        <!-- Image Preview -->
+        <div class="image-card fade-in">
+          <div id="resultImage" class="image-preview">
+            <!-- Image will be loaded via JavaScript -->
+          </div>
+        </div>
+        
+        <!-- Diagnosis Card -->
+        <div class="diagnosis-card slide-up">
+          <div class="diagnosis-header">
+            <p class="diagnosis-label">Terdeteksi</p>
+            <h2 id="diseaseName" class="disease-name">Loading...</h2>
+            <p id="latinName" class="latin-name">-</p>
+            
+            <div class="confidence-container">
+              <div id="confidenceBadge" class="confidence-badge">
+                <i class="fas fa-chart-line"></i>
+                <span id="confidenceValue">0%</span>
+              </div>
+            </div>
+            
+            <div style="display: flex; justify-content: center; gap: 8px; align-items: center;">
+              <span id="severityBadge" class="severity-badge severity-sedang">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Sedang</span>
+              </span>
+            </div>
+          </div>
+          
+          <p id="diseaseDescription" class="description-text">
+            Loading description...
+          </p>
+          
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">Status</div>
+              <div class="info-value">Terdeteksi</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Model AI</div>
+              <div class="info-value">CNN v2.0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Action Section -->
+      <div class="action-section">
+        <div class="action-buttons">
+          <button class="btn btn-secondary-action" onclick="goToHomepage()">
+            <i class="fas fa-home"></i>
+            <span>Beranda</span>
+          </button>
+          <button class="btn btn-primary-action" onclick="navigateTo('recommendation.html')">
+            <i class="fas fa-pills"></i>
+            <span>Lihat Rekomendasi</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- JavaScript -->
+  <script src="../js/app.js"></script>
+  
+  <script>
+    // Load result data when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const uploadedImage = getUploadedImage();
+      const disease = getSelectedDisease();
+      
+      // Redirect if no data
+      if (!uploadedImage || !disease) {
+        alert('Data tidak ditemukan. Silakan upload gambar terlebih dahulu.');
+        navigateTo('upload.html');
+        return;
+      }
+      
+      // Display image
+      const imagePreview = document.getElementById('resultImage');
+      if (imagePreview && uploadedImage) {
+        imagePreview.innerHTML = `<img src="${uploadedImage}" alt="Leaf Preview">`;
+      }
+      
+      // Display disease name
+      const diseaseName = document.getElementById('diseaseName');
+      if (diseaseName && disease.name) {
+        diseaseName.textContent = disease.name;
+      }
+      
+      // Display latin name
+      const latinName = document.getElementById('latinName');
+      if (latinName && disease.latinName) {
+        latinName.textContent = disease.latinName;
+      }
+      
+      // Display confidence
+      const confidenceValue = document.getElementById('confidenceValue');
+      const confidenceBadge = document.getElementById('confidenceBadge');
+      if (confidenceValue && disease.confidence) {
+        confidenceValue.textContent = formatConfidence(disease.confidence);
+        
+        // Color code based on confidence
+        const confidence = disease.confidence;
+        if (confidence >= 85) {
+          confidenceBadge.style.background = 'linear-gradient(135deg, #1B5E20, #2E7D32)';
+        } else if (confidence >= 75) {
+          confidenceBadge.style.background = 'linear-gradient(135deg, #E65100, #F57C00)';
+        } else {
+          confidenceBadge.style.background = 'linear-gradient(135deg, #B71C1C, #D32F2F)';
+        }
+      }
+      
+      // Display description
+      const diseaseDescription = document.getElementById('diseaseDescription');
+      if (diseaseDescription && disease.description) {
+        diseaseDescription.textContent = disease.description;
+      }
+      
+      // Display severity badge
+      const severityBadge = document.getElementById('severityBadge');
+      if (severityBadge && disease.severity) {
+        const severity = disease.severity.toLowerCase();
+        severityBadge.className = 'severity-badge';
+        
+        if (severity.includes('sangat tinggi')) {
+          severityBadge.classList.add('severity-sangat-tinggi');
+          severityBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i><span>Sangat Tinggi</span>';
+        } else if (severity.includes('tinggi')) {
+          severityBadge.classList.add('severity-tinggi');
+          severityBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i><span>Tinggi</span>';
+        } else {
+          severityBadge.classList.add('severity-sedang');
+          severityBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i><span>Sedang</span>';
+        }
+      }
+    });
+  </script>
+</body>
+</html>

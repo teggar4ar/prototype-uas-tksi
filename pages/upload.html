@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Upload Foto Daun - Deteksi Penyakit Tanaman">
+  <title>Upload Foto - Plant Disease Detection</title>
+  
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="../css/styles.css">
+  
+  <style>
+    /* Upload Page Specific Styles */
+    .upload-container {
+      background-color: var(--background-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .upload-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, #1B5E20 100%);
+      padding: var(--spacing-md);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .upload-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 20% 80%, rgba(165, 214, 167, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(165, 214, 167, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    
+    .header-content {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .back-button {
+      position: absolute;
+      left: var(--spacing-md);
+      top: var(--spacing-md);
+      background: rgba(255, 255, 255, 0.2);
+      color: var(--white);
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      z-index: 10;
+    }
+    
+    .back-button:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+    }
+    
+    .back-button i {
+      font-size: 18px;
+    }
+    
+    .upload-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--secondary-color), #81C784);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto var(--spacing-sm);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .upload-icon i {
+      font-size: 32px;
+      color: var(--primary-color);
+    }
+    
+    .upload-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+    
+    .upload-subtitle {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.5;
+    }
+    
+    .upload-content {
+      flex: 1;
+      padding: var(--spacing-sm);
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .upload-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .upload-area {
+      background: var(--white);
+      border: 3px dashed var(--secondary-color);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-lg);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .upload-area:hover {
+      border-color: var(--primary-color);
+      background: #F1F8E9;
+      transform: scale(1.02);
+    }
+    
+    .upload-area.drag-over {
+      border-color: var(--primary-color);
+      background: #E8F5E9;
+      transform: scale(1.02);
+    }
+    
+    .upload-icon-large {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--secondary-color), #81C784);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto var(--spacing-md);
+    }
+    
+    .upload-icon-large i {
+      font-size: 40px;
+      color: var(--primary-color);
+    }
+    
+    .upload-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: var(--spacing-xs);
+    }
+    
+    .upload-hint {
+      font-size: 12px;
+      color: var(--text-light);
+      line-height: 1.5;
+    }
+    
+    .file-input {
+      display: none;
+    }
+    
+    .preview-section {
+      display: none;
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .preview-section.visible {
+      display: block;
+    }
+    
+    .preview-card {
+      background: var(--white);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-sm);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+    }
+    
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .preview-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .preview-title i {
+      color: var(--success-color);
+    }
+    
+    .change-button {
+      background: none;
+      border: none;
+      color: var(--primary-color);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+    
+    .change-button:hover {
+      background: var(--secondary-color);
+    }
+    
+    .preview-image {
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .preview-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    
+    .info-box {
+      background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
+      border-radius: 10px;
+      padding: var(--spacing-sm);
+      border-left: 3px solid #2196F3;
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .info-box-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    
+    .info-box-header i {
+      color: #1976D2;
+      font-size: 16px;
+    }
+    
+    .info-box-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1565C0;
+      margin: 0;
+    }
+    
+    .info-box-text {
+      font-size: 11px;
+      color: #0D47A1;
+      line-height: 1.5;
+      margin: 0;
+    }
+    
+    .action-section {
+      position: sticky;
+      bottom: 0;
+      background: var(--white);
+      padding: var(--spacing-sm);
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+      border-top: 1px solid var(--border-color);
+    }
+    
+    #analyzeBtn {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    #analyzeBtn:disabled {
+      background-color: #BDBDBD;
+      transform: none;
+    }
+    
+    #analyzeBtn:not(:disabled) {
+      opacity: 1;
+      cursor: pointer;
+    }
+    
+    /* Animations */
+    .fade-in {
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="upload-container">
+      <!-- Header Section -->
+      <div class="upload-header">
+        <button class="back-button" onclick="navigateTo('detection.html')" title="Kembali">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        
+        <div class="header-content">
+          <div class="upload-icon">
+            <i class="fas fa-cloud-upload-alt"></i>
+          </div>
+          <h1 class="upload-title">Upload Foto Daun</h1>
+          <p class="upload-subtitle">
+            Pilih foto daun tanaman untuk dianalisis
+          </p>
+        </div>
+      </div>
+      
+      <!-- Main Content -->
+      <div class="upload-content">
+        <div class="upload-section">
+          <!-- Info Box -->
+          <div class="info-box">
+            <div class="info-box-header">
+              <i class="fas fa-camera"></i>
+              <h3 class="info-box-title">Petunjuk Foto</h3>
+            </div>
+            <p class="info-box-text">
+              Ambil foto dengan pencahayaan yang baik, fokus pada daun yang menunjukkan gejala penyakit. Ukuran file maksimal 5MB.
+            </p>
+          </div>
+          
+          <!-- Upload Area -->
+          <div id="uploadArea" class="upload-area" onclick="triggerFileInput()">
+            <div class="upload-icon-large pulse">
+              <i class="fas fa-image"></i>
+            </div>
+            <p class="upload-text">Klik untuk Pilih Foto</p>
+            <p class="upload-hint">
+              atau seret dan lepas file di sini<br>
+              <small>Mendukung: JPG, PNG, JPEG (Max 5MB)</small>
+            </p>
+            <input 
+              type="file" 
+              id="fileInput" 
+              class="file-input" 
+              accept="image/*"
+              onchange="handleImageUpload(event)"
+            >
+          </div>
+          
+          <!-- Preview Section -->
+          <div id="previewSection" class="preview-section">
+            <div class="preview-card fade-in">
+              <div class="preview-header">
+                <h3 class="preview-title">
+                  <i class="fas fa-check-circle"></i>
+                  Foto Terpilih
+                </h3>
+                <button class="change-button" onclick="triggerFileInput()">
+                  <i class="fas fa-sync-alt"></i> Ganti Foto
+                </button>
+              </div>
+              <div id="imagePreview" class="preview-image"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Action Section -->
+        <div class="action-section">
+          <button id="analyzeBtn" class="btn" onclick="startAnalysis()" disabled>
+            <i class="fas fa-brain"></i>
+            <span>Analisis Sekarang</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- JavaScript -->
+  <script src="../js/app.js"></script>
+  
+  <script>
+    // Drag and drop functionality
+    const uploadArea = document.getElementById('uploadArea');
+    const previewSection = document.getElementById('previewSection');
+    
+    // Prevent default drag behaviors
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      uploadArea.addEventListener(eventName, preventDefaults, false);
+      document.body.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    // Highlight drop area
+    ['dragenter', 'dragover'].forEach(eventName => {
+      uploadArea.addEventListener(eventName, () => {
+        uploadArea.classList.add('drag-over');
+      }, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+      uploadArea.addEventListener(eventName, () => {
+        uploadArea.classList.remove('drag-over');
+      }, false);
+    });
+    
+    // Handle dropped files
+    uploadArea.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      
+      if (files.length > 0) {
+        const fileInput = document.getElementById('fileInput');
+        fileInput.files = files;
+        
+        // Trigger the change event
+        const event = new Event('change', { bubbles: true });
+        fileInput.dispatchEvent(event);
+      }
+    }, false);
+    
+    // Show preview section when image is loaded
+    function enableAnalyzeButton() {
+      const analyzeBtn = document.getElementById('analyzeBtn');
+      const previewSection = document.getElementById('previewSection');
+      
+      if (analyzeBtn) {
+        analyzeBtn.disabled = false;
+        analyzeBtn.style.opacity = '1';
+        analyzeBtn.style.cursor = 'pointer';
+      }
+      
+      if (previewSection) {
+        previewSection.classList.add('visible');
+      }
+    }
+  </script>
+</body>
+</html>
